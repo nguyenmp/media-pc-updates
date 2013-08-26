@@ -2,6 +2,7 @@
 
 
 Function Main()
+  Call RunWindowsUpdate()
   Call RunNinite()
   Call CleanProfAccount()
   Call RunCCleaner()
@@ -11,7 +12,10 @@ End Function
 
 
 Function RunWindowsUpdate()
-
+  Dim objShell
+  Set objShell = WScript.CreateObject("WScript.Shell")
+  objShell.Run """C:\Windows\System32\wuauclt.exe"" /detectnow", 1, 1
+  objShell.Run """C:\Windows\System32\wuauclt.exe"" /ShowWUAutoScan", 1, 1
 End Function
 
 
