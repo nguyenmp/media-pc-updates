@@ -9,8 +9,6 @@ Function Main()
   Call RunWindowsUpdate()
   Call RunNinite()
   
-  WScript.Quit
-  
   '// We clean after installations in case there's extra junk
   Call CleanProfAccount()
   Call RunCCleaner()
@@ -25,7 +23,6 @@ End Function
 Function UpdateSelf()
   Dim objFSO : Set objFSO = CreateObject("Scripting.FileSystemObject")
   tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\temp"
-  WScript.Echo tempFullName
   
   '// Download the latest file from the internet
   Dim xHttp: Set xHttp = CreateObject("Microsoft.XMLHTTP")
@@ -54,6 +51,7 @@ Function UpdateSelf()
   '// If there is a difference, replace ourself, delete temp and relaunch
   If (Not (strThisFile = strTempFile)) Then
     objFSO.CopyFile tempFullName, WScript.ScriptFullName, True
+	WScript.Echo "Updated Successfully--Relaunching Now"
 	Dim objShell : Set objShell = CreateObject("WScript.Shell")
 	objShell.Run """" & WScript.ScriptFullName & """"
 	WScript.Quit
