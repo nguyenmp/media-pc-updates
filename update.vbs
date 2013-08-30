@@ -2,16 +2,71 @@
 
 
 Function Main()
+  '// Make sure we're on the latest version of our script
+  Call UpdateSelf()
+  
+  '// We do all installations first
   Call RunWindowsUpdate()
   Call RunNinite()
+  
+  WScript.Quit
+  
+  '// We clean after installations in case there's extra junk
   Call CleanProfAccount()
   Call RunCCleaner()
+  
+  '// Finally run ESET cause it's slow
   Call RunEset()
 End Function
 
 
 
+
+Function UpdateSelf()
+  Dim objFSO : Set objFSO = CreateObject("Scripting.FileSystemObject")
+  tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\temp"
+  WScript.Echo tempFullName
+  
+  '// Download the latest file from the internet
+  Dim xHttp: Set xHttp = CreateObject("Microsoft.XMLHTTP")
+  Dim bStrm: Set bStrm = CreateObject("Adodb.Stream")
+  xHttp.Open "GET", "https://raw.github.com/nguyenmp/media-pc-updates/master/update.vbs", False
+  xHttp.Send
+  
+  '// Store it temporarily
+  With bStrm
+    .type = 1 '//Text -- Not Binary
+    .open
+    .write xHttp.responseBody
+    .savetofile tempFullName, 2
+  End With
+  
+  '// Compare ourselves with the latest file
+  Dim objThisFile : Set objThisFile = objFSO.OpenTextFile(WScript.ScriptFullName, 1)
+  Dim objTempFile : Set objTempFile = objFSO.OpenTextFile(tempFullName, 1)
+  
+  strThisFile = objThisFile.ReadAll
+  objThisFile.Close
+  
+  strTempFile = objTempFile.ReadAll
+  objTempFile.Close
+  
+  '// If there is a difference, replace ourself, delete temp and relaunch
+  If (Not (strThisFile = strTempFile)) Then
+    objFSO.CopyFile tempFullName, WScript.ScriptFullName, True
+	Dim objShell : Set objShell = CreateObject("WScript.Shell")
+	objShell.Run """" & WScript.ScriptFullName & """"
+	WScript.Quit
+  Else
+    '// Else (if there is no difference), delete temp and continue execution
+	objFSO.DeleteFile(tempFullName)
+  End If
+End Function
+
+
+
 Function RunWindowsUpdate()
+  '//Launch auto scan with UI
   Dim objShell
   Set objShell = WScript.CreateObject("WScript.Shell")
   objShell.Run """C:\Windows\System32\wuauclt.exe"" /detectnow", 1, 1
@@ -20,10 +75,30 @@ End Function
 
 
 Function RunNinite()
+  '// We need FileSystemObject and folder to search for ninite
+  Dim objFSO: Set objFSO = CreateObject("Scripting.FileSystemObject")
+  Dim objFolder: Set objFolder = objFSO.getFolder("C:\Users\media\Desktop\")
+  
+  '// Since ninite is named differently per pc
+  '// We search for any executable that starts with "Ninite"
+  Dim re: Set re = new regexp
+  With re
+    .Pattern = "^Ninite.*"
+	.IgnoreCase = True
+  End With
+  
+  '// We need a shell to execute any instances of Ninite
   Dim objShell
   Set objShell = WScript.CreateObject("WScript.Shell")
-  objShell.Run """C:\Users\meadmin\Desktop\Ninite Air CutePDF FileZilla Firefox Flash Installer.exe""", 1, 1
-End Function
+  
+  '// Search for any executable that starts with "Ninite" and run it
+  For Each objFile in objFolder.Files
+    If ((re.Test(objFile.Name)) And (objFSO.GetExtensionName(objFile.Path) = "exe")) Then
+	  absolutePath = """" & objFSO.GetAbsolutePathName(objFile) & """"
+	  objShell.Run absolutePath, 1, 1
+	End If
+  Next
+  End Function
 
 
 
@@ -47,6 +122,7 @@ End Function
 
 
 Function CleanDirectory(ByRef path)
+  '// Remove all files from the directory
   Set objFSO = CreateObject("Scripting.FileSystemObject")
   Set objFolder = objFSO.getFolder(path)
   For Each objFile In objFolder.Files
@@ -57,6 +133,7 @@ End Function
 
 
 Function RunCCleaner()
+  '// Update and autorun CCleaner, then run the UI
   Dim objShell
   Set objShell = WScript.CreateObject("WScript.Shell")
   objShell.Run """C:\Program Files\CCleaner\CCleaner.exe"" /update", 1, 1
