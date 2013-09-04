@@ -1,5 +1,4 @@
 
-
 Function Main()
   '// Make sure we're on the latest version of our script
   Call UpdateSelf()
@@ -72,6 +71,11 @@ End Function
 
 
 Function RunNinite()
+  
+  '// We need a shell to execute any instances of Ninite
+  Dim objShell
+  Set objShell = WScript.CreateObject("WScript.Shell")
+  
   '// We need FileSystemObject and folder to search for ninite
   Dim objFSO: Set objFSO = CreateObject("Scripting.FileSystemObject")
   Dim objFolder: Set objFolder = objFSO.getFolder("C:\Users\" & objShell.ExpandEnvironmentStrings("%USERNAME%") & "\Desktop\")
@@ -83,10 +87,6 @@ Function RunNinite()
     .Pattern = "^Ninite.*"
 	.IgnoreCase = True
   End With
-  
-  '// We need a shell to execute any instances of Ninite
-  Dim objShell
-  Set objShell = WScript.CreateObject("WScript.Shell")
   
   '// Search for any executable that starts with "Ninite" and run it
   For Each objFile in objFolder.Files
