@@ -1,4 +1,3 @@
-
 Function Main()
   '// Make sure we're on the latest version of our script
   Call UpdateSelf()
@@ -121,10 +120,13 @@ End Function
 Function CleanDirectory(ByRef path)
   '// Remove all files from the directory
   Set objFSO = CreateObject("Scripting.FileSystemObject")
-  Set objFolder = objFSO.getFolder(path)
-  For Each objFile In objFolder.Files
-    objFSO.DeleteFile(objFile.Path)
-  Next
+  
+  If objFSO.FolderExists(path) Then
+    Set objFolder = objFSO.getFolder(path)
+    For Each objFile In objFolder.Files
+      objFSO.DeleteFile(objFile.Path)
+    Next
+  End If
 End Function
 
 
