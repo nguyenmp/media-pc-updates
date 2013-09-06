@@ -88,14 +88,42 @@ Function RunNinite()
   End With
   
   '// Search for any executable that starts with "Ninite" and run it
+  niniteExists = False
   For Each objFile in objFolder.Files
     If ((re.Test(objFile.Name)) And (objFSO.GetExtensionName(objFile.Path) = "exe")) Then
 	  absolutePath = """" & objFSO.GetAbsolutePathName(objFile) & """"
 	  objShell.Run absolutePath, 1, 1
+	  niniteExists = True
 	End If
   Next
-  End Function
+  
+  If (Not niniteExists) Then
+    Call DownloadAndRunNinite()
+  End If
+End Function
 
+
+Function DownloadAndRunNinite()
+  Dim objFSO : Set objFSO = CreateObject("Scripting.FileSystemObject")
+  tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\Ninite.exe"
+  
+  '// Download the latest file from the internet
+  Dim xHttp: Set xHttp = CreateObject("Microsoft.XMLHTTP")
+  Dim bStrm: Set bStrm = CreateObject("Adodb.Stream")
+  xHttp.Open "GET", "http://nguyenmp.com/static/Ninite.exe", False
+  xHttp.Send
+  
+  '// Store it temporarily
+  With bStrm
+    .type = 1 '//Text -- Not Binary
+    .open
+    .write xHttp.responseBody
+    .savetofile tempFullName, 2
+  End With
+  
+  Dim ojbShell : Set objShell = CreateObject("WScript.Shell")
+  objShell.Run tempFullName, 1, 1
+End Function
 
 
 Function CleanProfAccount()
