@@ -22,7 +22,7 @@ Function UpdateSelf()
   tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\temp"
   
   '// Download the latest file from the internet
-  Dim xHttp: Set xHttp = CreateObject("Microsoft.XMLHTTP")
+  Dim xHttp: Set xHttp = CreateObject("MSXML2.ServerXMLHTTP.6.0")
   Dim bStrm: Set bStrm = CreateObject("Adodb.Stream")
   xHttp.Open "GET", "https://raw.github.com/nguyenmp/media-pc-updates/master/update.vbs", False
   xHttp.Send
@@ -108,7 +108,7 @@ Function DownloadAndRunNinite()
   tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\Ninite.exe"
   
   '// Download the latest file from the internet
-  Dim xHttp: Set xHttp = CreateObject("Microsoft.XMLHTTP")
+  Dim xHttp: Set xHttp = CreateObject("MSXML2.ServerXMLHTTP.6.0")
   Dim bStrm: Set bStrm = CreateObject("Adodb.Stream")
   xHttp.Open "GET", "http://nguyenmp.com/static/Ninite.exe", False
   xHttp.Send
