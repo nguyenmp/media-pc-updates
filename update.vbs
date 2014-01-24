@@ -2,6 +2,9 @@ Function Main()
   '// Make sure we're on the latest version of our script
   Call UpdateSelf()
   
+  '// Kill Skype cause it gets in the way
+  Call KillSkype()
+  
   '// We do all installations first
   Call RunWindowsUpdate()
   Call RunNinite()
@@ -13,7 +16,6 @@ Function Main()
   '// Finally run ESET cause it's slow
   Call RunEset()
 End Function
-
 
 
 
@@ -56,6 +58,15 @@ Function UpdateSelf()
     '// Else (if there is no difference), delete temp and continue execution
 	objFSO.DeleteFile(tempFullName)
   End If
+End Function
+
+
+
+Function KillSkype()
+  '// Kill skype cause it gets in the way
+  Dim objShell
+  Set objShell = WScript.CreateObject("WScript.Shell")
+  objShell.Run "taskkill /F /IM skype.exe", 1, 1
 End Function
 
 
