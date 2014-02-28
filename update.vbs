@@ -1,6 +1,6 @@
 Function Main()
   '// Make sure we're on the latest version of our script
-  Call UpdateSelf()
+  '// Call UpdateSelf()
   
   '// Kill Skype cause it gets in the way
   Call KillSkype()
@@ -88,7 +88,7 @@ Function RunNinite()
   
   '// We need FileSystemObject and folder to search for ninite
   Dim objFSO: Set objFSO = CreateObject("Scripting.FileSystemObject")
-- Dim objFolder: Set objFolder = objFSO.getFolder(WScript.ScriptFullName).ParentFolder.Path)
+  Dim objFolder: Set objFolder = objFSO.getFile(WScript.ScriptFullName).ParentFolder
   
   '// Since ninite is named differently per pc
   '// We search for any executable that starts with "Ninite"
