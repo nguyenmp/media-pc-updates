@@ -88,7 +88,7 @@ Function RunNinite()
   
   '// We need FileSystemObject and folder to search for ninite
   Dim objFSO: Set objFSO = CreateObject("Scripting.FileSystemObject")
-  tempFullName = objFSO.GetFile(WScript.ScriptFullName).ParentFolder.Path & "\Ninite.exe"
+- Dim objFolder: Set objFolder = objFSO.getFolder(WScript.ScriptFullName).ParentFolder.Path)
   
   '// Since ninite is named differently per pc
   '// We search for any executable that starts with "Ninite"
