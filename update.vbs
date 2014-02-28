@@ -1,6 +1,6 @@
 Function Main()
   '// Make sure we're on the latest version of our script
-  '// Call UpdateSelf()
+  Call UpdateSelf()
   
   '// Kill Skype cause it gets in the way
   Call KillSkype()
